@@ -4,4 +4,4 @@ nose plugin like so::
     $ easy_install snot
     $ nosetests --with-snot
 
-..image:: http://static.whit537.org/2011/snot.png
+.. image:: http://static.whit537.org/2011/snot.png
