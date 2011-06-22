@@ -8,6 +8,6 @@ setup( author = 'Chad Whitacre'
      , name='snot'
      , py_modules=['snot']
      , url = 'https://github.com/whit537/snot'
-     , version = '0.1'
+     , version = '0.2'
       )
 

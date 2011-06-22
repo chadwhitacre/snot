@@ -7,20 +7,34 @@ import sys
 import traceback
 import unittest
 
-from nose.plugins import Plugin 
+from nose.plugins import Plugin
+from nose.plugins.capture import Capture
+from nose.util import ln
 from unittest import TestResult
 
 
-class Snot(Plugin):
+class Snot(Capture):
     """Snot is colored output from nose.
     """
-    # This is a stub to get nose to give us --with-snot.
 
     name = "snot"
 
     def help(self):
         return self.__doc__
 
+    def options(self, parser, env):
+        """Override to un-conflict options with parent plugin.
+        """
+        Plugin.options(self, parser, env)
+
+    def addCaptureToErr(self, ev, output):
+        """Override to highlight captured output.
+        """
+        return '\n'.join([ str(ev) 
+                         , ln('>> begin captured stdout <<')
+                         , '\033[1;36m' + output + '\033[0m'
+                         , ln('>> end captured stdout <<')
+                          ])
 
 class Highlighter:
 
@@ -76,9 +90,25 @@ def _exc_info_to_string(self, err, test):
 
     ############################### begin new
     #
-    if len(msgLines) > 1:
-        msgLines[-2] = fileinfo.highlight(msgLines[-2])
+    nlines = len(msgLines)
+    if nlines > 1:
+
+        # Highlight the error message.
         msgLines[-1] = actual.highlight(msgLines[-1])
+
+        # Highlight the file at the bottom of the stack.
+        i = -2
+        if msgLines[i].strip() == '^':
+            # For a SyntaxError we get a line of code and a caret indicating a
+            # position in that line. Back up two more line in that case.
+            i = -4
+        msgLines[i] = fileinfo.highlight(msgLines[i])
+
+        # Highlight the file with the breaking test.
+        for i in range(nlines):
+            if 'test_' in msgLines[i]:
+                msgLines[i] = fileinfo.highlight(msgLines[i])
+                break
     #
     ############################### end new
 
