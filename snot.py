@@ -112,9 +112,16 @@ def _exc_info_to_string(self, err, test):
     #
     ############################### end new
 
+
+    ############################### gah more new hacks! red hot!
     if hasattr(self, 'buffer'):
-        output = sys.stdout.getvalue()
-        error = sys.stderr.getvalue()
+        output = error = ""
+        if hasattr(sys.stdout, 'getvalue'):
+            output = sys.stdout.getvalue()
+        if hasattr(sys.stderr, 'getvalue'):
+            error = sys.stderr.getvalue()
+    ############################### end more new hacks
+
         if output:
             if not output.endswith('\n'):
                 output += '\n'
