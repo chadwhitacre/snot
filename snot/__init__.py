@@ -123,19 +123,22 @@ def _exc_info_to_string(self, err, test):
 
     ############################### begin new
     #
-    colorize_traceback_lines(msgLines)
-    #
-    ############################### end new
+    colorize_traceback_lines(msgLines)  # operates in-place
 
-
-    ############################### gah more new hacks! red hot!
     if hasattr(self, 'buffer'):
+        # This part is a red-hot hack.
+        # https://github.com/whit537/snot/pull/1
         output = error = ""
         if hasattr(sys.stdout, 'getvalue'):
             output = sys.stdout.getvalue()
         if hasattr(sys.stderr, 'getvalue'):
             error = sys.stderr.getvalue()
-    ############################### end more new hacks
+
+        # These are constants from unittest/result.py.
+        STDOUT_LINE = '\nStdout:\n%s'
+        STDERR_LINE = '\nStderr:\n%s'
+    #
+    ############################### end new
 
         if output:
             if not output.endswith('\n'):
