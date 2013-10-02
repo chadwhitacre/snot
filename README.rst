@@ -9,9 +9,9 @@ Use it with unittest:
 nose uses unittest under the hood, so if you have snot installed it will work
 with nose without any further changes:
 
-.. image:: https://github.com/whit537/snot/raw/master/screenshots/nose.png
+.. image:: https://github.com/whit537/snot/raw/master/screenshots/nosetests.png
 
-Snot also works automatically with `py.test --tb=native`::
+Snot also works automatically with `py.test --tb=native`:
 
 .. image:: https://github.com/whit537/snot/raw/master/screenshots/pytest.png
 
