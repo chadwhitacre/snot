@@ -1,10 +1,16 @@
-This is a colorizer for unittest output. Easy_install it and then use it as a
+This is a colorizer for test output. Install it with `pip` and then use it as a
 nose plugin like so::
 
-    $ easy_install snot
+    $ pip install snot
     $ nosetests --with-snot
 
-.. image:: https://github.com/whit537/snot/raw/master/screenshot.png
+.. image:: https://github.com/whit537/snot/raw/master/screenshot-nose.png
+
+Or use it as a `pytest` plugin like so:
+
+    $ py.tests --tb=snot
+
+.. image:: https://github.com/whit537/snot/raw/master/screenshot-pytest.png
 
 
 License
@@ -12,7 +18,7 @@ License
 
 MIT - http://www.opensource.org/licenses/mit-license.php
 
-Copyright (c) 2011 YouGov, plc. 
+Copyright (c) 2011-2013 YouGov, plc. and Chad Whitacre
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

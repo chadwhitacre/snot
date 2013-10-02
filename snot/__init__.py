@@ -1,40 +1,36 @@
-"""Monkey-patch unittest to pop the tb info we care about.
+"""Hack test output to pop the tb info we care about.
 """
 import os
 import pprint
 import re
 import sys
 import traceback
-import unittest
-
-from nose.plugins import Plugin
-from nose.plugins.capture import Capture
-from nose.util import ln
-from unittest import TestResult
 
 
-class Snot(Capture):
-    """Snot is colored output from nose.
-    """
+# py.test
+# =======
 
-    name = "snot"
+try:
+    import pytest
+except ImportError:
+    pass
+else:
+    import _pytest as SnotPyTest
 
-    def help(self):
-        return self.__doc__
 
-    def options(self, parser, env):
-        """Override to un-conflict options with parent plugin.
-        """
-        Plugin.options(self, parser, env)
+# nose
+# ====
 
-    def addCaptureToErr(self, ev, output):
-        """Override to highlight captured output.
-        """
-        return '\n'.join([ str(ev) 
-                         , ln('>> begin captured stdout <<')
-                         , '\033[1;36m' + output + '\033[0m'
-                         , ln('>> end captured stdout <<')
-                          ])
+try:
+    import nose
+except ImportError:
+    pass
+else:
+    from _nose import SnotNose
+
+
+# unittest
+# ========
 
 class Highlighter:
 
@@ -69,11 +65,10 @@ def try_to_pretty_print(match):
 
 actual = Highlighter(r'^([^:]+): (.*)$', try_to_pretty_print)
 
-
 def _exc_info_to_string(self, err, test):
     """Converts a sys.exc_info()-style tuple of values into a string.
-    
-    Overriden to add ANSI color escapes at key moments. 
+
+    Overriden to add ANSI color escapes at key moments.
 
     """
     exctype, value, tb = err
@@ -132,21 +127,8 @@ def _exc_info_to_string(self, err, test):
             msgLines.append(STDERR_LINE % error)
     return ''.join(msgLines)
 
-TestResult._exc_info_to_string = _exc_info_to_string
 
-
-class Tests(unittest.TestCase):
-
-    def test_success(self):
-        pass
-
-    def test_failure(self):
-        self.assertTrue(False) 
-
-    def test_error(self):
-        raise heck
-
-
-if __name__ == '__main__':
-    import unittest
-    unittest.main()
+def install(unittest):
+    """Monkey-patch unittest with snot highlighter.
+    """
+    unittest.TestResult._exc_info_to_string = _exc_info_to_string
