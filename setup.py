@@ -10,6 +10,6 @@ setup( author = 'Chad Whitacre'
      , name='snot'
      , packages=['snot']
      , url = 'https://github.com/whit537/snot'
-     , version = '1.0.0'
+     , version = '1.0.0-dev'
       )
 
