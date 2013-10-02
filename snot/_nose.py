@@ -13,7 +13,7 @@ class SnotNose(Capture):
     name = "snot"
 
     def __init__(self, *a, **kw):
-        snot.install(unittest)
+        snot.install(unittest)  # This is the real work. Nose uses unittest.
         Capture.__init__(self, *a, **kw)
 
     def help(self):
