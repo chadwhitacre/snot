@@ -1,17 +1,17 @@
-This is a colorizer for test output. Install it with `pip`::
+This is a colorizer for test output. Install it with ``pip``::
 
     $ pip install snot
 
-Use it with `unittest`:
+Use it with ``unittest``:
 
 .. image:: https://github.com/whit537/snot/raw/master/screenshots/unittest.png
 
-`nosetests` uses `unittest` under the hood, so if you have `snot` installed it
-will automatically work with `nosetests`:
+``nosetests`` uses ``unittest`` under the hood, so if you have ``snot``
+installed it will automatically work with ``nosetests``:
 
 .. image:: https://github.com/whit537/snot/raw/master/screenshots/nosetests.png
 
-`snot` also works automatically with `py.test --tb=native`:
+``snot`` also works automatically with ``py.test --tb=native``:
 
 .. image:: https://github.com/whit537/snot/raw/master/screenshots/py.test.png
 
