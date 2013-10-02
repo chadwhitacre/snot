@@ -1,16 +1,19 @@
-This is a colorizer for test output. Install it with `pip` and then use it as a
-nose plugin like so::
+This is a colorizer for test output. Install it with `pip`::
 
     $ pip install snot
-    $ nosetests --with-snot
 
-.. image:: https://github.com/whit537/snot/raw/master/screenshot-nose.png
+Use it with unittest:
 
-Or use it as a `pytest` plugin like so:
+.. image:: https://github.com/whit537/snot/raw/master/screenshots/unittest.png
 
-    $ py.tests --tb=snot
+nose uses unittest under the hood, so if you have snot installed it will work
+with nose without any further changes:
 
-.. image:: https://github.com/whit537/snot/raw/master/screenshot-pytest.png
+.. image:: https://github.com/whit537/snot/raw/master/screenshots/nose.png
+
+Snot also works automatically with `py.test --tb=native`::
+
+.. image:: https://github.com/whit537/snot/raw/master/screenshots/pytest.png
 
 
 License

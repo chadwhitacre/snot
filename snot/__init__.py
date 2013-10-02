@@ -29,8 +29,8 @@ else:
     from _nose import SnotNose
 
 
-# unittest
-# ========
+# Highlighting
+# ============
 
 class Highlighter:
 
@@ -42,11 +42,47 @@ class Highlighter:
         return self.__pattern.sub(self.__highlight, line)
 
 
-fileinfo = Highlighter( r'^(.*"/?(?:.*/)*)([^"]+)", line (\d+)'
-                      , r'\1\033[1;31m\2\033[0m", line \033[1;31m\3\033[0m'
-                       )
+fileinfo_highlighter = Highlighter( r'^(.*"/?(?:.*/)*)([^"]+)", line (\d+)'
+                                  , r'\1\033[1;31m\2\033[0m", line \033[1;31m\3\033[0m'
+                                   )
 
-def try_to_pretty_print(match):
+def colorize_traceback_lines(lines):
+    """Given a list of str, colorize some of them in place.
+    """
+    nlines = len(lines)
+    if nlines > 1:
+
+        # Highlight the error message.
+        lines[-1] = exc_highlighter.highlight(lines[-1])
+
+        # Highlight the file at the bottom of the stack.
+        i = -2
+        if lines[i].strip() == '^':
+            # For a SyntaxError we get a line of code and a caret indicating a
+            # position in that line. Back up two more line in that case.
+            i = -4
+        lines[i] = fileinfo_highlighter.highlight(lines[i])
+
+        # Highlight the file with the breaking test.
+        for i in range(nlines):
+            if 'test_' in lines[i]:
+                lines[i] = fileinfo_highlighter.highlight(lines[i])
+                break
+
+def _exc_highlighter(match):
+    exc = match.group(1)
+    msg = match.group(2)
+    msg = '\033[1;36m' + msg + '\033[0m'
+    return '\033[1;31m' + exc + '\033[0m: ' + msg
+
+exc_highlighter = Highlighter(r'^([^:]+): (.*)$', _exc_highlighter)
+
+
+
+# unittest
+# ========
+
+def _exc_and_assert_highlighter(match):
     exc = match.group(1)
     msg = match.group(2)
     if exc == 'AssertionError':
@@ -63,7 +99,9 @@ def try_to_pretty_print(match):
     msg = '\033[1;36m' + msg + '\033[0m'
     return '\033[1;31m' + exc + '\033[0m: ' + msg
 
-actual = Highlighter(r'^([^:]+): (.*)$', try_to_pretty_print)
+exc_and_assert_highlighter = Highlighter( r'^([^:]+): (.*)$'
+                                        , _exc_and_assert_highlighter
+                                         )
 
 def _exc_info_to_string(self, err, test):
     """Converts a sys.exc_info()-style tuple of values into a string.
@@ -85,25 +123,7 @@ def _exc_info_to_string(self, err, test):
 
     ############################### begin new
     #
-    nlines = len(msgLines)
-    if nlines > 1:
-
-        # Highlight the error message.
-        msgLines[-1] = actual.highlight(msgLines[-1])
-
-        # Highlight the file at the bottom of the stack.
-        i = -2
-        if msgLines[i].strip() == '^':
-            # For a SyntaxError we get a line of code and a caret indicating a
-            # position in that line. Back up two more line in that case.
-            i = -4
-        msgLines[i] = fileinfo.highlight(msgLines[i])
-
-        # Highlight the file with the breaking test.
-        for i in range(nlines):
-            if 'test_' in msgLines[i]:
-                msgLines[i] = fileinfo.highlight(msgLines[i])
-                break
+    colorize_traceback_lines(msgLines)
     #
     ############################### end new
 
@@ -128,7 +148,11 @@ def _exc_info_to_string(self, err, test):
     return ''.join(msgLines)
 
 
+is_installed = False
+
 def install(unittest):
     """Monkey-patch unittest with snot highlighter.
     """
+    global is_installed
+    is_installed = True
     unittest.TestResult._exc_info_to_string = _exc_info_to_string
